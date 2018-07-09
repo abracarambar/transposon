@@ -10,7 +10,7 @@ TRANSP_FILE=/g/data1a/jp48/scripts/MELTv2.1.4/me_refs/1KGP_Hg19/${TRANSP_TYPE}_M
 PRIORS_FILE=/g/data1a/jp48/scripts/MELTv2.1.4/prior_files/${TRANSP_TYPE}.1KGP.sites.vcf
 OUTPUTDIR=/g/data1a/jp48/MELT/IndivAnalysis/${TRANSP_TYPE}
 
-java -Xmx6G  -jar /g/data1a/jp48/scripts/MELTv2.1.4/MELT.jar IndivAnalysis \
+java -Xmx6G -jar /g/data1a/jp48/scripts/MELTv2.1.4/MELT.jar IndivAnalysis \
      -t $TRANSP_FILE $PRIORS_FILE \
      -w $OUTPUTDIR \
      -c $COV \
