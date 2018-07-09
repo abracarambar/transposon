@@ -24,7 +24,7 @@
 #PBS -W umask=027
 
 \#\## Set out (Use job ID so it's unique)
-#PBS -o ${out}.o\${PBS_JOBID}
+#PBS -e ${out}.\${ERRFILE}_\${TASK_ID}
 
 \#\## Request nodes, memory, walltime. NB THESE ARE REQUIRED.
 \#\##i
