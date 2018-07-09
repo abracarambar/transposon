@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#PBS -V
+
+\#\## Job name
+#PBS -N $name
+
+\#\## Join queuing system output and error files into a single output file
+#PBS -j oe
+
+\#\## Send email to user when job ends or aborts
+#PBS -m ae
+
+\#\## email address for user
+#PBS -M $email
+
+\#\## Queue name that job is submitted to
+#PBS -q $queue
+
+\#\## Provide project to be billed
+#PBS -P jp48
+
+\#\## Make the data readable to everyone in the group
+#PBS -W umask=027
+
+\#\## Set out (Use job ID so it's unique)
+#PBS -o ${out}.o\${PBS_JOBID}
+
+\#\## Request nodes, memory, walltime. NB THESE ARE REQUIRED.
+\#\##i
+\#\## run, change these entries
+#PBS -l ncpus=${cores}
+#PBS -l mem=${mem}gb
+#PBS -l walltime=${time}:00:00
+
+# Load required modules
+module load java
+module load bowtie2
+
+echo Running on host `hostname`
+echo Time is `date`
+
+# This jobs working directory
+${setwd}
+${command}
