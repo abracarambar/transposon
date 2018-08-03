@@ -1,5 +1,15 @@
 #!/bin/bash
+
+######################################################################
+#
+# Maely Gauthier 19/07/2018
+# This is an adaptation of scripts developed by Eugene gardner
+# see http://melt.igs.umaryland.edu/manual.php#_Other_MELT_Tools
+#
+######################################################################
+
 TRANSP_TYPE=$1
+OUTPUTDIR=$2
 #OUTPUTDIR=/g/data1a/jp48/MELT/GroupAnalysis/Genotype_${TRANSP_TYPE}
 TRANSP_FILE=/g/data1a/jp48/scripts/MELTv2.1.4/me_refs/1KGP_Hg19/${TRANSP_TYPE}_MELT.zip
 #WORKDIR=/g/data1a/jp48/MELT/IndivAnalysis/${TRANSP_TYPE}

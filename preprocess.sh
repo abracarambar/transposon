@@ -1,9 +1,12 @@
 #!/bin/bash
-##
-#Maely Gauthier
-#09 July 2018
-#First step to run MELT pipeline
-##
+
+######################################################################
+#
+# Maely Gauthier 19/07/2018
+# This is an adaptation of scripts developed by Eugene gardner
+# see http://melt.igs.umaryland.edu/manual.php#_Other_MELT_Tools
+#
+######################################################################
 
 
 # Preprocess generates three files, all as suffixes to the current bam file:
