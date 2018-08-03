@@ -17,7 +17,7 @@ import pandas as pd
 #EXAMPLE OF COMMAND
 #source activate localpython
 #first derive coverage
-#python pbs_make_all.py -r 'lisa' -u 'm.gauthier' -l '/g/data1a/jp48/MELT/bam_files4.txt' -c '/g/data1a/jp48/MELT/Coverage.txt' -o '/g/data1a/jp48/MELT/Lisa' -p '1'
+#python pbs_make_all.py -r 'lisa' -u 'm.gauthier@garvan.org.au' -l '/g/data1a/jp48/MELT/bam_files4.txt' -c '/g/data1a/jp48/MELT/Coverage.txt' -o '/g/data1a/jp48/MELT/Lisa' -p '1'
 #run the rest of the pipeline
 #python pbs_make_all.py -r 'lisa' -u 'm.gauthier' -l '/g/data1a/jp48/MELT/bam_files4.txt' -c '/g/data1a/jp48/MELT/Coverage.txt' -o '/g/data1a/jp48/MELT/Lisa'
 
@@ -34,7 +34,8 @@ def main():
     parser = argparse.ArgumentParser(description='Create the parser')
     run, textfile_path, user, cov_path, outdir_path, picard = local_parser(parser, require_user=True)
     print 'Folder where commands will be stored is ' + str(run) + '\nText file specifying the path of bam files is ' + str(textfile_path) + '\nUser email is ' + str(user) + '\nText file specifying coverage is' + str(cov_path) + \nOutput folder is ' + str(outdir_path)
-    email = user + '@garvan.org.au'
+    #email = user + '@garvan.org.au'
+    email = user
     print email
     print cov_path
     #list of bam files to analyse
