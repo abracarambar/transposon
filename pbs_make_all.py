@@ -16,7 +16,7 @@ import pandas as pd
 #
 #EXAMPLE OF COMMAND
 #source activate localpython
-#first derive coverage 
+#first derive coverage
 #python pbs_make_all.py -r 'lisa' -u 'm.gauthier' -l '/g/data1a/jp48/MELT/bam_files4.txt' -c '/g/data1a/jp48/MELT/Coverage.txt' -o '/g/data1a/jp48/MELT/Lisa' -p '1'
 #run the rest of the pipeline
 #python pbs_make_all.py -r 'lisa' -u 'm.gauthier' -l '/g/data1a/jp48/MELT/bam_files4.txt' -c '/g/data1a/jp48/MELT/Coverage.txt' -o '/g/data1a/jp48/MELT/Lisa'
@@ -171,13 +171,14 @@ def generate_template_per_sample(mem,
     '''
     #make it detect others
 #    sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.bam", "")
-    sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.recalibrated.bam", "")
+    #sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.recalibrated.bam", "")
+    sample_red = sample_path.split('/')[-1].replace(".bam", "")
     #pbs_output_dir = '/g/data1a/jp48/MELT/pbs_logs/'
     pbs_output_dir = pbs_path
     scripts_dir='/g/data1a/jp48/scripts/transposon/'
 
     full_script_name = os.path.join(scripts_dir, script_name)
-    
+
     #give bam file here, not sample name
     wd = "echo Working directory is ${PBS_O_WORKDIR}\n" + \
          "cd ${PBS_O_WORKDIR}\n"
@@ -293,7 +294,8 @@ def create_pbs_launch_script(sample_paths, pbs_path):
         fout.write('#!/bin/bash' + '\n')
         sample_red_list = []
         for sample_path in sample_paths:
-            sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.recalibrated.bam", "")
+            #sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.recalibrated.bam", "")
+            sample_red = sample_path.split('/')[-1].replace(".bam", "")
 #            sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.bam", "")
             print sample_red
             sample_red_list.append(sample_red)
@@ -313,9 +315,10 @@ def create_pbs_launch_script(sample_paths, pbs_path):
 
         #genotype step
         for sample_path in sample_paths:
-            
+
 #            sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.bam", "")
-            sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.recalibrated.bam", "")
+            #sample_red = sample_path.split('/')[-1].replace(".dedup.realigned.recalibrated.bam", "")
+            sample_red = sample_path.split('/')[-1].replace(".bam", "")
             for element in TE:
                 fout.write('MELT_Genotype_' + str(sample_red) + '_' + str(element) + '=`qsub -W depend=afterok:' + '$MELT_GroupAn_' +  str(element) + ' ' + pbs_path + str(sample_red) + '_genotype_' + str(element) + '_pbs.sh`' '\n')
                 fout.write('echo $MELT_Genotype_' + str(sample_red) + '_' + str(element) + '\n')
@@ -351,7 +354,8 @@ def local_parser(parser, require_user=False):
 
 def extract_sample_name(sample):
     #sample_red = sample.replace(".dedup.realigned.bam", "")
-    sample_red = sample.replace(".dedup.realigned.recalibrated.bam", "")
+    #sample_red = sample.replace(".dedup.realigned.recalibrated.bam", "")
+    sample_red = sample.replace(".bam", "")
     return sample_red
 
 if __name__ == "__main__":
