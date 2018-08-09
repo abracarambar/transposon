@@ -36,8 +36,8 @@ def main():
     #print 'Folder where commands will be stored is ' + str(run) + '\nText file specifying the path of bam files is ' + str(textfile_path) + '\nUser email is ' + str(user) + '\nText file specifying coverage is' + str(cov_path) + '\nOutput folder is ' + str(outdir_path)
     #email = user + '@garvan.org.au'
     email = user
-    print email
-    print cov_path
+    #print email
+    #print cov_path
     #list of bam files to analyse
     #textfile_path = '/g/data1a/jp48/MELT/bam_files.txt'
     if os.path.exists(textfile_path):
