@@ -33,7 +33,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Create the parser')
     run, textfile_path, user, cov_path, outdir_path, picard = local_parser(parser, require_user=True)
-    print 'Folder where commands will be stored is ' + str(run) + '\nText file specifying the path of bam files is ' + str(textfile_path) + '\nUser email is ' + str(user) + '\nText file specifying coverage is' + str(cov_path) + \nOutput folder is ' + str(outdir_path)
+    #print 'Folder where commands will be stored is ' + str(run) + '\nText file specifying the path of bam files is ' + str(textfile_path) + '\nUser email is ' + str(user) + '\nText file specifying coverage is' + str(cov_path) + '\nOutput folder is ' + str(outdir_path)
     #email = user + '@garvan.org.au'
     email = user
     print email
