@@ -32,7 +32,7 @@ import pandas as pd
 def main():
 
     parser = argparse.ArgumentParser(description='Create the parser')
-    run, textfile_path, user, cov_path, outdir_path, picard = local_parser(parser, require_user=True)
+    pbs_path, textfile_path, user, cov_path, outdir_path, picard = local_parser(parser, require_user=True)
     #print 'Folder where commands will be stored is ' + str(run) + '\nText file specifying the path of bam files is ' + str(textfile_path) + '\nUser email is ' + str(user) + '\nText file specifying coverage is' + str(cov_path) + '\nOutput folder is ' + str(outdir_path)
     #email = user + '@garvan.org.au'
     email = user
@@ -45,7 +45,7 @@ def main():
         samples_path = bam_file_paths_from_txt_file(textfile_path)
         print samples_path
         exit
-    pbs_path = '/g/data1a/jp48/scripts/transposon/' + run + '/'
+    #pbs_path = '/g/data1a/jp48/scripts/transposon/' + run + '/'
     if not os.path.isdir(pbs_path):
         os.makedirs(pbs_path)
         #might alos need to set permission so everyone can acces files
