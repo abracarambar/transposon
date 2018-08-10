@@ -94,7 +94,7 @@ def generate_all_separate_pbs_scripts(samples_path, pbs_path, email, cov_path, o
     for sample_path in samples_path:
 
         #Preprocess step
-        generate_template_per_sample('1', #RAMs used <1 for bam with coverage 100X
+        generate_template_per_sample('10', #RAMs used <1 for bam with coverage 100X #one TCGA bam file of Laveniya failed, required a lot of vmem ~10Gb....
                             '1', #CPUs
                             'preprocess',
                             'preprocess.sh',
