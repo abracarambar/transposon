@@ -78,8 +78,8 @@ def main():
                     'filter_vcf_for_somatic_calls.sh',
                     pbs_path,
                     email,
-                    '6', #optimise, will this be enough for ALU??
-                    'normal',
+                    '1', #optimise, will this be enough for ALU??
+                    'express',
                     outdir_path,
                     SampleSheet_df)
     # print patient
@@ -303,14 +303,14 @@ def generate_template_per_patient(mem,
                     email,
                     time,
                     batchqueue,
-                    cov_path,
+                    outdir_path,
                     SampleSheet_df):
     '''
     writes the variable details of the pbs scripts to call all sample specific pbs scripts
     '''
     #pbs_output_dir = pbs_path
-    #scripts_dir='/g/data1a/jp48/scripts/transposon/'
-    full_script_name = os.path.join(pbs_path, script_name)
+    scripts_dir='/g/data1a/jp48/scripts/transposon/'
+    full_script_name = os.path.join(scripts_dir, script_name)
     #give bam file here, not sample name
     wd = "echo Working directory is ${PBS_O_WORKDIR}\n" + \
          "cd ${PBS_O_WORKDIR}\n"
@@ -325,7 +325,7 @@ def generate_template_per_patient(mem,
         normal_sample = SampleSheet_df.loc[(SampleSheet_df['patient'] == patient) & (SampleSheet_df['test_tissue'] == "N"), 'sample'].item()
         TE = ('LINE1', 'ALU', 'SVA')
         for element in TE:
-            cmd = "bash '" + full_script_name + "' '" + patient + "' '" + normal_sample + "' '" + tumour_sample + "' '" + element + ".final_comp.vcf'"
+            cmd = "bash '" + full_script_name + "' '" + patient + "' '" + normal_sample + "' '" + tumour_sample + "' '" + element + "' '" +  str(outdir_path) + "'"
             #print cmd
             print 'Creating script for '  + step + ' & ' + str(element)
             name = '_'.join([str(patient), step, element])
