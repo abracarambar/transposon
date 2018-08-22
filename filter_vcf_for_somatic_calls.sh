@@ -19,7 +19,7 @@ module load htslib
 ##ASSESS<4
 ##calls that are 0/0 in both the reference and the tumour sample
 
-if [ ! -d "${TRANS_DIR}/$VCF" ]; then
+if [ ! -f ${TRANS_DIR}/${VCF}.gz ]; then
     echo "Need to compress and index VCF file first"
     bgzip ${TRANS_DIR}/$VCF
     tabix ${TRANS_DIR}/$VCF.gz
@@ -27,10 +27,10 @@ fi
 
 #VCF_base=`basename $VCF .vcf`
 
-bcftools view -t ^hs37d5  -s $NORMAL,$TUMOUR -f '%LINE\n' -e '%FILTER=="ac0" || %FILTER=="lc" || LP+RP<4 || SR<4 || ASSESS<4' -U ${TRANS_DIR}/$VCF.gz  | sed 's/0\/0\:/0\/0\ /g' | sed 's/0\/1\:/0\/1\ /g' | sed 's/1\/1\:/1\/1\ /g' | sed 's/1\/0\:/1\/0\ /g' | sed 's/.\/.\:/.\/.\ /g' | tr  ' ' '\t' | awk '{if (($10=="0/0" && $12=="0/1") || ($10=="0/1" && $12=="0/0") || ($10=="0/1" && $12=="./.") || ($10=="0/1" && $12=="1/1") || ($10=="1/1" && $12=="0/1")) print}' > ${TRANS_DIR}/${VCF}_${SAMPLE}_somatic.vcf 
+bcftools view -t ^hs37d5  -s $NORMAL,$TUMOUR -f '%LINE\n' -e '%FILTER=="ac0" || %FILTER=="lc" || LP+RP<4 || SR<4 || ASSESS<4' -U ${TRANS_DIR}/$VCF.gz  | sed 's/0\/0\:/0\/0\ /g' | sed 's/0\/1\:/0\/1\ /g' | sed 's/1\/1\:/1\/1\ /g' | sed 's/1\/0\:/1\/0\ /g' | sed 's/.\/.\:/.\/.\ /g' | tr  ' ' '\t' | awk '{if (($10=="0/0" && $12=="0/1") || ($10=="0/1" && $12=="0/0") || ($10=="0/1" && $12=="./.") || ($10=="0/1" && $12=="1/1") || ($10=="1/1" && $12=="0/1")) print}' > ${TRANS_DIR}/${SAMPLE}_${ELEMENT}_somatic.vcf 
 
 #sleep 5
 
 echo 'Total calls recovered:' 
-wc -l ${TRANS_DIR}/${VCF}_${SAMPLE}_somatic.vcf
+wc -l ${TRANS_DIR}/${SAMPLE}_${ELEMENT}_somatic.vcf
 
