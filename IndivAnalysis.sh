@@ -17,7 +17,6 @@ BASEDIR=$4
 OUTPUTDIR=${BASEDIR}/${TRANSP_TYPE}
 TRANSP_FILE=/g/data1a/jp48/scripts/MELTv2.1.4/me_refs/1KGP_Hg19/${TRANSP_TYPE}_MELT.zip
 PRIORS_FILE=/g/data1a/jp48/scripts/MELTv2.1.4/prior_files/${TRANSP_TYPE}.1KGP.sites.vcf
-#OUTPUTDIR=/g/data1a/jp48/MELT/${TRANSP_TYPE}
 
 java -Xmx6G -jar /g/data1a/jp48/scripts/MELTv2.1.4/MELT.jar IndivAnalysis \
      -t $TRANSP_FILE $PRIORS_FILE \
@@ -25,4 +24,5 @@ java -Xmx6G -jar /g/data1a/jp48/scripts/MELTv2.1.4/MELT.jar IndivAnalysis \
      -c $COV \
      -bamfile $BAM \
      -h /g/data1a/jp48/scripts/human_g1k_v37_decoy.fasta \
-     -b NC_007605/hs37d5
+     -b NC_007605/hs37d5 \
+     -r 150

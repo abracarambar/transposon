@@ -19,7 +19,8 @@ import pandas as pd
 #first derive coverage
 #python pbs_make_all.py -r 'lisa' -u 'm.gauthier@garvan.org.au' -l '/g/data1a/jp48/MELT/bam_files4.txt' -c '/g/data1a/jp48/MELT/Coverage.txt' -o '/g/data1a/jp48/MELT/Lisa' -p '1'
 #run the rest of the pipeline including somatic step
-#python pbs_make_all.py -r '/g/data1a/jp48/scripts/transposon/ocscc' -u 'm.gauthier@garvan.org.au' -l '/g/data1a/jp48/scripts/transposon/TCGA_BAMs3.txt' -c '/g/data1a/jp48/scripts/transposon/TCGABAMcoverage.txt' -o '/g/data1a/jp48/scripts/transposon/ocscc' -s 'true'
+#python pbs_make_all.py -r '/g/data1a/jp48/scripts/transposon/ocscc' -u 'm.gauthier@garvan.org.au' -l '/g/data1a/jp48/scripts/transposon/TCGA_BAMs3.txt' -c '/g/data1a/jp48/scripts/transposon/TCGABAMcoverage.txt' -o '/g/data1a/jp48/scripts/transposon/ocscc' -s 'True'
+#qselect -u <username> | xargs qdel
 
 ######################################################################
 ###
@@ -33,6 +34,7 @@ def main():
     pbs_path, textfile_path, user, cov_path, outdir_path, picard, somatic = local_parser(parser, require_user=True)
     #print 'Folder where commands will be stored is ' + str(run) + '\nText file specifying the path of bam files is ' + str(textfile_path) + '\nUser email is ' + str(user) + '\nText file specifying coverage is' + str(cov_path) + '\nOutput folder is ' + str(outdir_path)
     email = user
+    print somatic
     pbs_path = pbs_path + '/'
 
 
@@ -58,7 +60,7 @@ def main():
                                 sample_path,
                                 pbs_path,
                                 email,
-                                '8', # took 2h for a bam with coverage 100X
+                                '12', # took 2h for a bam with coverage 100X
                                 'express',
                                 cov_path,
                                 outdir_path)
@@ -69,9 +71,11 @@ def main():
         generate_all_separate_pbs_scripts(SampleSheet_df, samples_path, pbs_path, email, cov_path, outdir_path)
 
         #create a single script to run all pbs jobs
-        create_pbs_launch_script(SampleSheet_df, pbs_path)
+        create_pbs_launch_script(SampleSheet_df, pbs_path, somatic)
 
     if somatic:
+        # for index, row in SampleSheet_df.iterrows():
+        #     sample = row['sample']
         generate_template_per_patient('4', #might have to bring this up to 8Gb
                     '1', #confirmation from developer that MELT will only use 1 core
                     'somatic_calls',
@@ -82,17 +86,6 @@ def main():
                     'express',
                     outdir_path,
                     SampleSheet_df)
-    # print patient
-        # TE = ('LINE1', 'ALU', 'SVA')
-        # for element in TE:
-        #     cmd = "bash '" + full_script_name + "' '" + patient + "' '" + sample_path + "' '" + str(element) + "' '" + str(outdir_path) + "'"
-        #     print 'Creating script for '  + step + ' & ' + str(element)
-        #     name = '_'.join([str(sample), step, element])
-        #     script_name = pbs_path + name + '_pbs.sh'
-        #     out = os.path.join(pbs_output_dir, name)
-        #     write_template(name, email, batchqueue, out, cpus, mem, time, cmd, wd, script_name)
-        #
-
 
 def names_from_txt_file(textfile_path):
     #sample_no = 0
@@ -166,7 +159,7 @@ def generate_all_separate_pbs_scripts(SampleSheet_df, samples_path, pbs_path, em
                             sample_path,
                             pbs_path,
                             email,
-                            '6', #optimise, will this be enough for ALU??
+                            '10', #optimise, 6 was not enough for some ALU jobs
                             'normal',
                             cov_path,
                             outdir_path)
@@ -182,8 +175,6 @@ def generate_all_separate_pbs_scripts(SampleSheet_df, samples_path, pbs_path, em
                          'normal',
                          cov_path,
                          outdir_path)
-
-
 
 def generate_template_per_sample(mem,
                                 cpus,
@@ -210,7 +201,7 @@ def generate_template_per_sample(mem,
          "cd ${PBS_O_WORKDIR}\n"
 
     if step == 'picard':
-        cmd = "bash '" + full_script_name + "' '" + sample_path + "' '" + str(outdir_path) + "'"
+        cmd = "bash '" + full_script_name + "' '" + sample_path + "'"
         print 'Creating script for '  + step
         name = '_'.join([str(sample), step])
         script_name = pbs_path + name + '_pbs.sh'
@@ -239,7 +230,7 @@ def generate_template_per_sample(mem,
                         name = '_'.join([str(sample), step, element])
                         script_name = pbs_path + name + '_pbs.sh'
                         out = os.path.join(pbs_output_dir, name)
-                        #only for ALU analysis and
+                        #only for ALU analysis
                         if element == 'ALU' and cov > 75 and "_T" in sample:
                             time = 36
                         write_template(name, email, batchqueue, out, cpus, mem, time, cmd, wd, script_name)
@@ -252,6 +243,12 @@ def generate_template_per_sample(mem,
             name = '_'.join([str(sample), step, element])
             script_name = pbs_path + name + '_pbs.sh'
             out = os.path.join(pbs_output_dir, name)
+            if element == 'ALU' in sample:
+                time = 15
+            elif element == 'SVA' in sample:
+                time = 1
+            elif element == 'LINE1' in sample:
+                time = 4
             write_template(name, email, batchqueue, out, cpus, mem, time, cmd, wd, script_name)
 
 
@@ -320,9 +317,14 @@ def generate_template_per_patient(mem,
         patient = row['patient']
         patient_list.append(patient)
 
+    # TE = ('LINE1', 'ALU', 'SVA')
+    # for element in TE:
     for patient in patient_list:
         tumour_sample = SampleSheet_df.loc[(SampleSheet_df['patient'] == patient) & (SampleSheet_df['test_tissue'] == "Y"), 'sample'].item()
         normal_sample = SampleSheet_df.loc[(SampleSheet_df['patient'] == patient) & (SampleSheet_df['test_tissue'] == "N"), 'sample'].item()
+        # for patient in patient_list:
+        #     tumour_sample = SampleSheet_df.loc[(SampleSheet_df['patient'] == patient) & (SampleSheet_df['test_tissue'] == "Y"), 'sample'].item()
+        #     normal_sample = SampleSheet_df.loc[(SampleSheet_df['patient'] == patient) & (SampleSheet_df['test_tissue'] == "N"), 'sample'].item()
         TE = ('LINE1', 'ALU', 'SVA')
         for element in TE:
             cmd = "bash '" + full_script_name + "' '" + patient + "' '" + normal_sample + "' '" + tumour_sample + "' '" + element + "' '" +  str(outdir_path) + "'"
@@ -350,10 +352,11 @@ def write_template(name, email, batchqueue, out, cpus, mem, time, cmd, wd, scrip
     with open(script_name, "w") as f:
         f.write(str(template))
 
-def create_pbs_launch_script(SampleSheet_df, pbs_path):
+def create_pbs_launch_script(SampleSheet_df, pbs_path, somatic):
     '''
     Manages dependencies in the PBS queue - what waits for what
     '''
+    #print somatic
     TE = ('LINE1', 'ALU', 'SVA')
     call_all_script = pbs_path + 'call_all_pbs.sh'
     with open(call_all_script, 'w') as fout:
@@ -397,9 +400,16 @@ def create_pbs_launch_script(SampleSheet_df, pbs_path):
             genotype_dependency = ':'.join([('${MELT_Genotype_' + str(sample) + '_' + str(element) + '}') for sample in sample_list])
             fout.write('MELT_MakeVCF_' + str(element) + '=`qsub -W depend=afterok:' + genotype_dependency + ' ' + pbs_path + 'MakeVCF_' + str(element) + '_pbs.sh`' '\n')
             fout.write('echo $MELT_MakeVCF_' + str(element) + '\n')
-            make_vcf_dependency = ':'.join([('${MELT_MakeVCF_' + str(element) + '}')])
-            fout.write('MELT_somatic_' + str(element) + '=`qsub -W depend=afterok:' + make_vcf_dependency +  ' ' + pbs_path + str(patient) + '_somatic_calls_' + str(element) + '_pbs.sh`' '\n')
-            fout.write('echo $MELT_somatic_' + str(element) + '\n')
+            # make_vcf_dependency = ':'.join([('${MELT_MakeVCF_' + str(element) + '}')])
+        # if somatic == 'True':
+        #     for index, row in SampleSheet_df.iterrows():
+        #         patient = row['patient']
+        #         sample = row['sample']
+        #         if '_T' in sample:
+        #             for element in TE:
+        #                 make_vcf_dependency = ':'.join([('${MELT_MakeVCF_' + str(element) + '}')])
+        #                 fout.write('MELT_somatic_' + str(sample) + '_' + str(element) + '=`qsub -hold_jid' + make_vcf_dependency +  ' ' + pbs_path + str(patient) + '_somatic_calls_' + str(element) + '_pbs.sh`' '\n')
+        #                 fout.write('echo $MELT_somatic_' + str(sample) + '_' + str(element) + '\n')
 
         fout.write('exit 0')
 

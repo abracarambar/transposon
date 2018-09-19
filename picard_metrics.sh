@@ -10,7 +10,6 @@ module load java
 
 cd $PBS_O_WORKDIR
 BAM=$1
-
 java -jar /g/data1a/jp48/scripts/picard/build/libs/picard.jar CollectWgsMetrics \
       I=$BAM \
       O=$BAM.metrics \

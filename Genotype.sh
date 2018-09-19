@@ -13,7 +13,6 @@ TRANSP_TYPE=$2
 BASEDIR=$3
 OUTPUTDIR=${BASEDIR}/${TRANSP_TYPE}
 FILE_LOC=/g/data1a/jp48/scripts/MELTv2.1.4/${TRANSP_TYPE}_with_priors.txt
-OUTPUTDIR=/g/data1a/jp48/MELT/${TRANSP_TYPE}
 
 java -Xmx4G -jar /g/data1a/jp48/scripts/MELTv2.1.4/MELT.jar Genotype \
      -bamfile $BAM \
